@@ -20,7 +20,7 @@ batchList = []
 
 for mouse in samples:
     paramFile = os.path.join(batchDirectory, 'parameter_file_' + mouse + '.py')
-    paramList.append(paramFile)
+    batchList.append(paramFile)
     execfile(paramFile)
     
 #Loading the results of detectCells func
