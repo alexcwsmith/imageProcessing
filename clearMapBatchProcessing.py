@@ -6,10 +6,8 @@ Created on Tue Dec 17 14:18:16 2019
 @author: smith
 """
 
-import pandas as pd
-import numpy as np
+
 import os
-import glob
 import skimage
 
 samples = ['IA1_RT', 'IA1_RB', 'IA1_LT', 'IA1_LB', 
@@ -26,7 +24,7 @@ for mouse in samples:
 #Loading the results of detectCells func
     points, intensities = io.readPoints(ImageProcessingParameter["sink"]);
 #Filtering (here by voxel size)
-    points, intensities = thresholdPoints(points, intensities, threshold = (4,200), row = (3,3));
+    points, intensities = thresholdPoints(points, intensities, threshold = (10,200), row = (3,3));
     io.writePoints(FilteredCellsFile, (points, intensities));
 #Transform points to atlas
     points = io.readPoints(CorrectionResamplingPointsParameter["pointSource"]);
