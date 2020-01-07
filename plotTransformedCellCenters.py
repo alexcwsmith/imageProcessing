@@ -33,9 +33,9 @@ io.writeData(os.path.join(BaseDirectory, 'IA2_RB_Points_Transformed.tif'), data)
 
 label = io.readData(AnnotationFile)
 label = label.astype('int32')
-labelids = numpy.unique(label)
+labelids = np.unique(label)
 
-outside = numpy.zeros(label.shape, dtype = bool);
+outside = np.zeros(label.shape, dtype = bool);
 
 
 """
@@ -46,7 +46,7 @@ region ID, increase n.
 """
 for l in labelids:
     if not (lbl.labelAtLevel(l, 6) == 672):
-       outside = numpy.logical_or(outside, label == l);
+       outside = np.logical_or(outside, label == l);
 
 #DP = 814 (level 6)
 #MHb = 483 (level 7)
