@@ -39,7 +39,7 @@ Ymax = ((Ymax.min())+50)
 Ymax = Ymax + Y2
 
 
-dataCrop = data[Xmin:Xmax,Ymin:Ymax]
+dataCrop = data[:data.shape[0],Ymin:Ymax,Xmin:Xmax,]
 skimage.io.imsave(os.path.join(baseDirectory, sampleID + '_auto_cropped.ome.tif'), dataCrop)
 
 
