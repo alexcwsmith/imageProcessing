@@ -4,6 +4,10 @@
 Created on Sun Dec 15 17:30:50 2019
 
 @author: smith
+
+This file works with isolated points for a subregion that are created by the plotTransformedPointCenters 
+script. The function of this script is to split points into sub-groups, which can be done iteratively to
+improve performance and accuracy for irregular shaped structures.
 """
 
 import ClearMap.IO.IO as io
