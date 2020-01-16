@@ -45,7 +45,8 @@ for mouse in samples:
     dfPoints_sorted_y = dfPoints_counts_y.sort_index()
     dfPoints_sorted_y.to_excel(os.path.join(baseDirectory, 'y_binned_striatum_2' + hemisphere + '.xlsx'))
     
-    #figY = dfPoints_sorted_y.plot.bar(figsize=(20,10))
+    figY = dfPoints_sorted_y.sort_index().plot.bar(figsize=(20,10), label='mouse')
+    figY.savefig(os.path.join(baseDirectory, 'Figy.png'))
     print(dfPoints_sorted_y)
     
     #2nd Iteration - Splits anterior half of striatum into 3 subregions
@@ -58,6 +59,9 @@ for mouse in samples:
     dfPoints_s2_count.sort_index()
     dfPoints_s2_count.to_excel(os.path.join(baseDirectory, 'y_binned_striatum_iter2-split6' + hemisphere + '.xlsx'))
     dfPoints_s2_count.sort_index()
+    figY2 = dfPoints_s2_count.sort_index().plot.line(figsize=(20,10), label = 'mouse')
+    figY2.savefig(os.path.join(baseDirectory, 'Figy2.png'))
+    
     
     ant0 = dfPoints_s2_count.sort_index()[0]
     ant1 = dfPoints_s2_count.sort_index()[1]
