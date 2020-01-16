@@ -34,7 +34,7 @@ for mouse in samples:
 #    "threshold" : 125,     # (float or None)      threshold to determine mask. Pixels below this are background if None no mask is generated
 #    "save"      : None, #os.path.join(BaseDirectory, 'cellShape/cellShape\d{4}.ome.tif'), # (str or None)        file name to save result of this operation if None dont save to file 
 #    "verbose"   : True      # (bool or int)        print / plot information about this step if None take intensities at the given pixels
-#}
+#    }
     
 
 #    removeBackgroundParameter = {
