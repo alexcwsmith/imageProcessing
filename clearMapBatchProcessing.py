@@ -28,31 +28,6 @@ for mouse in samples:
     execfile(paramFile)
     
     
-#####THIS SECTION CAN BE RUN AFTER EXECFILE ABOVE IN ORDER TO OVERRIDE THE INDIVIDUAL PARAMETER FILES AND TEST NEW SETTINGS FOR ALL SAMPLES AT ONCE
-    #UNCOMMENT TO USE
-#    detectCellShapeParameter = {
-#    "threshold" : 125,     # (float or None)      threshold to determine mask. Pixels below this are background if None no mask is generated
-#    "save"      : None, #os.path.join(BaseDirectory, 'cellShape/cellShape\d{4}.ome.tif'), # (str or None)        file name to save result of this operation if None dont save to file 
-#    "verbose"   : True      # (bool or int)        print / plot information about this step if None take intensities at the given pixels
-#    }
-    
-
-#    removeBackgroundParameter = {
-#        "size"    : (8,8),  # size in pixels (x,y) for the structure element of the morphological opening
-#        "save"    : None, #os.path.join(BaseDirectory, 'Background/background\d{4}.ome.tif'), # file name to save result of this operation
-#        "verbose" : True  # print / plot information about this step       
-#    }
-    
-    #Difference of Gaussians filter: to enhance the edges. Useful if the objects have a non smooth texture (eg: amyloid deposits)
-#    filterDoGParameter = {
-#        "size"    : (4,4,4),        # (tuple or None)      size for the DoG filter in pixels (x,y,z) if None, do not correct for any background
-#        "sigma"   : None,        # (tuple or None)      std of outer Gaussian, if None automatically determined from size
-#        "sigma2"  : None,        # (tuple or None)      std of inner Gaussian, if None automatically determined from size
-#        "save"    : None, #os.path.join(BaseDirectory, 'DoG/DoG\d{4}.ome.tif'),        # (str or None)        file name to save result of this operation if None dont save to file 
-#        "verbose" : True         # (bool or int)        print / plot information about this step
-#    }
-    
-#
 ####Resampling Data:
     resampleData(**CorrectionResamplingParameterCfos);
     resampleData(**CorrectionResamplingParameterAutoFluo);
