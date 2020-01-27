@@ -15,26 +15,26 @@ import matplotlib as mplt
 
 
 
-BaseDirectory = '/d2/studies/ClearMap/Opto_iDISCO/DP9_chR2_1-3x/'
-filename = os.path.join(BaseDirectory, 'DP9_cfos_stack.ome.tif');
+BaseDirectory = '/d2/studies/ClearMap/IA_iDISCO/IA1_RB/'
+filename = os.path.join(BaseDirectory, 'IA1_RB_cfos_stack.ome.tif');
 
 
-data = io.readData(filename, z = (650, 750));
+data = io.readData(filename, z = (600, 650));
 # size restriction 
-fileRange = 'x = (550, 650), y = (600, 700), z = (25,34)' 
+fileRange = 'x = (1050, 1350), y = (550,850), z = (25,34)' 
 
 """ note that the Z coordinate in fileRange variable are relative to the planes imported in the data variable.
 So in this case, you would be imaging planes 675-684.
 """
 
-plt.plotTiling(data, inverse = True, x = (550, 650), y = (600, 700), z = (25,34)) #
+plt.plotTiling(data, inverse = True, x = (1250, 1350), y = (550,650), z = (25,34)) #
 # background subtraction
-dataBGR = bgr.removeBackground(data.astype('float'), size=(7,7), verbose = False, save = '7_background.tif');
-dataBGR_write = plt.plotTiling(dataBGR, inverse = True, x = (550, 650), y = (600, 700), z = (25,34));
+dataBGR = bgr.removeBackground(data.astype('float'), size=(5,5), verbose = False, save = None);
+dataBGR_write = plt.plotTiling(dataBGR, inverse = True, x = (1250, 1350), y = (550, 650), z = (25,34));
 dataBGR_write = plt.overlayPoints(dataBGR, fileRange);
-mplt.pyplot.savefig('dataBGR_write.tif')
+mplt.pyplot.savefig(os.path.join(BaseDirectory, 'dataBGR_write.tif'))
 
-io.writeData(os.path.join(BaseDirectory, 'background_15.tif'), dataBGR_write);
+io.writeData(os.path.join(BaseDirectory, 'background_8.tif'), dataBGR_write);
 io.writeData(os.path.join(BaseDirectory, 'cells_check.tif'), data);
 
 
