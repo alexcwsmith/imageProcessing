@@ -4,6 +4,10 @@
 Created on Tue Nov 12 11:52:40 2019
 
 @author: smith
+
+This script is for working with data from full brains imaged with the 4X Objective. It rescales the images by a factor of 0.5
+in order to facilitate loading the data into ClearMap. Set the path to a folder containing individual z-slices of stitched data,
+and this script will rescale and crop all images and write them to a new output folder.
 """
 
 
