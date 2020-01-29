@@ -6,10 +6,7 @@ Created on Sun Dec 15 15:08:02 2020
 @author: smith
 
 This script finds the edges of the TIF stack and crops them to be +/- 50 pixels from those edges.
-It writes a .xlsx file with the new coordinates in ImageJ format. While it is possible to change the threshold
-values established here to use this script to crop signal channels, because of greater variability in signal 
-than autofluorescence, it is best to use this script on the autofluorescence file, then manually crop the 
-data image stack with info from the .xlsx output (using Imagej --> edit --> selection --> specify)
+It writes a .xlsx file with the new coordinates, then crops the signal channel.
 """
 
 import os
