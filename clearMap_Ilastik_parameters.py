@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Example script to set up the parameters for the image processing pipeline
+Example script to set up the parameters for the image processing pipeline.
+
+Note even though variables indicate 'cFosFile', the signal channel can be whatever you are looking at.
+Just too much work to update all of the variables in the package to indicate other than cFos.
 """
 
 ######################### Import modules
