@@ -18,7 +18,7 @@ import pandas as pd
 import skimage
 
 
-sampleID = 'ROC_17'
+sampleID = 'ROC_16'
 baseDirectory = '/d2/studies/ClearMap/ROC_iDISCO/' + sampleID
 data = skimage.io.imread(os.path.join(baseDirectory, sampleID + '_auto_stack.ome.tif'))
 
@@ -26,9 +26,9 @@ X1 = 500
 X2 = 1500
 XminData = data[600:700,1250:1550,:X1] #note dimension indices are [z,y,x], these need to contain the widest part of your brain, but should be limited to reduce computation
 XmaxData = data[600:700,1250:1550,X2:]
-Xmin = np.nonzero(XminData[2]>2000)[1]
+Xmin = np.nonzero(XminData[2]>1000)[1]
 Xmin = (Xmin.min()-50)
-Xmax = np.nonzero(XmaxData[2]<200)[1]
+Xmax = np.nonzero(XmaxData[2]<500)[1]
 Xmax = ((Xmax.min())+50)
 Xmax = Xmax + X2
 Y1 = 500
@@ -36,9 +36,9 @@ Y2 = 2000
 YminData = data[600:700,:Y1,850:1250] #again these dimension indices are [z,y,x], and should contain the widest part of your brain.
 YmaxData = data[600:700,Y2:,850:1250]
 
-Ymin = np.nonzero(YminData[1]>2000)[0]
+Ymin = np.nonzero(YminData[1]>1000)[0]
 Ymin = (Ymin.min()-50)
-Ymax = np.nonzero(YmaxData[1]<200)[0]
+Ymax = np.nonzero(YmaxData[1]<100)[0]
 Ymax = ((Ymax.min())+50)
 Ymax = Ymax + Y2
 
@@ -58,10 +58,10 @@ if Height > 2560:
 Coords = pd.DataFrame(data=[Width,Height,Xmin,Ymin], index=['Width', 'Height', 'Xmin', 'Ymin'], columns=['Coordinate(pixel)'])
 Coords.to_excel(os.path.join(baseDirectory, 'Cropping_coordinates.xlsx'))
 
-dataCrop = data[:data.shape[0],Ymin:Ymax,Xmin:Xmax,]
+dataCrop = data[:data.shape[0],Ymin:Ymax,Xmin:Xmax]
 skimage.io.imsave(os.path.join(baseDirectory, sampleID + '_auto_cropped.ome.tif'), dataCrop)
 
-sampleID = 'ROC_17'
+sampleID = 'ROC_16'
 path = '/d2/studies/ClearMap/ROC_iDISCO/' + sampleID + '/SPmR/'
 resultpath = os.path.join(path, 'SPmR_cropped/')
 if not os.path.exists(resultpath):
