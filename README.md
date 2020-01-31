@@ -9,7 +9,7 @@ Email me at alexander.smith@mssm.edu with any questions.
 
 Currently, my analysis pipeline looks like this:
 
-1) clearMapStackCropping.py script - Currently I still open the autofluorescence files manually in ImageJ and save them as one large TIF stack. This basically ensures that I actually look at each brain to make sure nothing is super wrong with the imaging. I do check all of the signal channel images at some point, but for the most part I run the analysis blind.
+1) clearMapStackCropping.py script - Currently I still open the autofluorescence files manually in ImageJ and save them as one large TIF stack. This basically ensures that I actually look at each brain to make sure nothing is super wrong with the imaging. I do check all of the signal channel images while tuning parameters later, but for the most part run the analysis blind, and use the same parameters for all brains, of course.
 
 2) clearMap_Ilastik_parameters.py for machine learning classification, using a classifier that has previously been trained using Ilastik (ilastik.org) or clearMapWatershedParameters.py for detection of cells based on size/shape/intensity (better for regular circular c-Fos staining etc). Tune the parameters based on intensity values you check in the signal channel via ImageJ.
 
