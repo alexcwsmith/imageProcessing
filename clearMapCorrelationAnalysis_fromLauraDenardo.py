@@ -3,6 +3,8 @@
 """
 Created on Thu Oct 10 11:55:35 2019
 
+This script was primarily written by Laura DeNardo, and was lightly adapted by Alex Smith.
+
 @author: smith
 """
 
