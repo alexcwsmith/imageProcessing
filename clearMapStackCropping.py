@@ -6,7 +6,7 @@ Created on Sun Dec 15 15:08:02 2020
 @author: smith
 
 This script finds the edges of the TIF stack and crops them to be +/- 50 pixels from those edges.
-It writes a .xlsx file with the new coordinates, then crops the signal channel.
+It writes a .xlsx file with the new coordinates (in ImageJ (Width, Height, X1, Y1) format), then crops the signal channel.
 """
 
 import os
@@ -81,12 +81,3 @@ def cropAndResample():
 #            stack.save(tifffile.imread(filename), photometric='minisblack')
 
 cropAndResample()
-
-
-
-
-
-
-
-
-
