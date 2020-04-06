@@ -39,7 +39,7 @@ points, intensities = io.readPoints(ImageProcessingParameter["sink"]);
 #row = (1,1) : peak intensity from the DoG filtered data
 #row = (2,2) : peak intensity from the background subtracted data
 #row = (3,3) : voxel size from the watershed
-points, intensities = thresholdPoints(points, intensities, threshold = (4,200), row = (3,3));
+points, intensities = thresholdPoints(points, intensities, threshold = (8,200), row = (3,3));
 io.writePoints(FilteredCellsFile, (points, intensities));
 
 
