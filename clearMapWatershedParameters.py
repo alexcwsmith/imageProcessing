@@ -69,7 +69,7 @@ correctIlluminationParameter = {
 
 #Remove the background with morphological opening (optimised for spherical objects)
 removeBackgroundParameter = {
-    "size"    : (5,5),  # size in pixels (x,y) for the structure element of the morphological opening
+    "size"    : (8,8),  # size in pixels (x,y) for the structure element of the morphological opening
     "save"    : None, #os.path.join(BaseDirectory, 'Background/background\d{4}.ome.tif'), # file name to save result of this operation
     "verbose" : True  # print / plot information about this step       
 }
