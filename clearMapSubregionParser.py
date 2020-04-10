@@ -25,7 +25,7 @@ for mouse in samples:
     sampleName = mouse
     baseDirectory = '/d2/studies/ClearMap/IA_iDISCO/' + sampleName
     
-    ##IMPORT PREVIOUSLY PRE-PROCESSED HeatMap Data
+    ##Import previously generated points data isolated from the Caudoputamen
     hemisphere = '_left'
     data = io.readData(os.path.join(baseDirectory, sampleName + '_Caudoputamen' + '_isolated_points' + hemisphere + '.tif'))
     points = np.nonzero(data)[:3]
@@ -38,18 +38,19 @@ for mouse in samples:
     z_range=dfPoints.z.max() - dfPoints.z.min()
     print(x_range, y_range, z_range)
     
-    #Bin Y axis
+    #Bin Y axis into 2 bins - the back half of the caudoputamen in the ABA is the tail of the caudate, and is not examined here (as it is typically not in literature)
     dfPoints['y_bins']=pd.cut(dfPoints['y'], bins=2)
     dfPoints['y_bins'].value_counts()
     dfPoints_counts_y = dfPoints['y_bins'].value_counts()
     dfPoints_sorted_y = dfPoints_counts_y.sort_index()
-    dfPoints_sorted_y.to_excel(os.path.join(baseDirectory, 'y_binned_striatum_2' + hemisphere + '.xlsx'))
+    dfPoints_sorted_y.to_excel(os.path.join(baseDirectory, 'y_binned_striatum' + hemisphere + '.xlsx'))
     
     figY = dfPoints_sorted_y.sort_index().plot.bar(figsize=(20,10), label='mouse')
     figY.savefig(os.path.join(baseDirectory, 'Figy.png'))
     print(dfPoints_sorted_y)
     
-    #2nd Iteration - Splits anterior half of striatum into 3 subregions
+    #2nd Iteration - Splits anterior half of striatum into 6 subregions, splitting into more bins helps accurately parse medial/lateral
+    # divisions along the irregular shape of the anterior/posterior axis.
     firstHalf = dfPoints_sorted_y[0]
     dfPoints_s2 = dfPoints.sort_values(by=['y'])[:firstHalf]
     dfPoints_s2['y_iter2'] = pd.cut(dfPoints_s2['y'], bins=6)
@@ -114,6 +115,8 @@ for mouse in samples:
     dfPoints_post1_count = dfPoints_post1['x_bins2'].value_counts()
     dfPoints_post1_count.sort_index()
     
+    
+    #Concatenate the bins into subdivisions:
     if hemisphere == '_left':
         aDLS_combined = dfPoints_ant0_count[0] + dfPoints_ant1_count[0]
         mDLS_combined = dfPoints_mid0_count[0] + dfPoints_mid1_count[0]
