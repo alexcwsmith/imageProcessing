@@ -69,7 +69,7 @@ correctIlluminationParameter = {
 
 #Remove the background with morphological opening (optimised for spherical objects)
 removeBackgroundParameter = {
-    "size"    : (5,5),  # size in pixels (x,y) for the structure element of the morphological opening
+    "size"    : (8,8),  # size in pixels (x,y) for the structure element of the morphological opening
     "save"    : None, #os.path.join(BaseDirectory, 'Background/background\d{4}.ome.tif'), # file name to save result of this operation
     "verbose" : True  # print / plot information about this step       
 }
@@ -87,7 +87,7 @@ filterDoGParameter = {
 findExtendedMaximaParameter = {
     "hMax"      : None,            # (float or None)     h parameter (for instance 20) for the initial h-Max transform, if None, do not perform a h-max transform
     "size"      : (6,6,6),             # (tuple)             size for the structure element for the local maxima filter
-    "threshold" : 20,        # (float or None)     include only maxima larger than a threshold, if None keep all local maxima
+    "threshold" : 10,        # (float or None)     include only maxima larger than a threshold, if None keep all local maxima
     "save"      : None,         # (str or None)       file name to save result of this operation if None dont save to file 
     "verbose"   : True       # (bool or int)       print / plot information about this step
 }
