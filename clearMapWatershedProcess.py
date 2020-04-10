@@ -3,7 +3,7 @@
 Template to run the processing pipeline
 """
 #load the parameters:
-execfile('/d2/studies/ClearMap/IA_iDISCO/IA2_RT/parameter_file_IA2_RT_2.py')
+execfile('/d2/studies/ClearMap/IA_iDISCO/IA2_RT/parameter_file_IA2_RT.py')
 
 #resampling operations:
 #######################
@@ -23,7 +23,7 @@ resultDirectory  = alignData(**CorrectionAlignmentParameter);
 #alignment to the Atlas:
 resultDirectory  = alignData(**RegistrationAlignmentParameter);
 
-execfile('/d2/studies/ClearMap/IA_iDISCO/IA2_RT/parameter_file_IA2_RT_2.py')
+execfile('/d2/studies/ClearMap/IA_iDISCO/IA2_RT/parameter_file_IA2_RT.py')
 
 #Cell detection:
 ################
@@ -39,7 +39,7 @@ points, intensities = io.readPoints(ImageProcessingParameter["sink"]);
 #row = (1,1) : peak intensity from the DoG filtered data
 #row = (2,2) : peak intensity from the background subtracted data
 #row = (3,3) : voxel size from the watershed
-points, intensities = thresholdPoints(points, intensities, threshold = (4,200), row = (3,3));
+points, intensities = thresholdPoints(points, intensities, threshold = (8,200), row = (3,3));
 io.writePoints(FilteredCellsFile, (points, intensities));
 
 
@@ -74,14 +74,14 @@ intensities = io.readPoints(FilteredCellsFile[1])
 #Without weigths:
 vox = voxelize(points, AtlasFile, **voxelizeParameter);
 if not isinstance(vox, basestring):
-  io.writeData(os.path.join(BaseDirectory, 'cells_heatmap_vox15_2.tif'), vox.astype('int32'));
+  io.writeData(os.path.join(BaseDirectory, 'cells_heatmap_vox15.tif'), vox.astype('int32'));
 #
 
 #With weigths from the intensity file (here raw intensity):
 voxelizeParameter["weights"] = intensities[:,0].astype(float);
 vox = voxelize(points, AtlasFile, **voxelizeParameter);
 if not isinstance(vox, basestring):
-  io.writeData(os.path.join(BaseDirectory, 'cells_heatmap_weighted_vox15_2.tif'), vox.astype('int32'));
+  io.writeData(os.path.join(BaseDirectory, 'cells_heatmap_weighted_vox15.tif'), vox.astype('int32'));
 #
 
 
@@ -95,7 +95,7 @@ table = numpy.zeros(ids.shape, dtype=[('id','int64'),('counts','f8'),('name', 'a
 table["id"] = ids;
 table["counts"] = counts;
 table["name"] = labelToName(ids);
-io.writeTable(os.path.join(BaseDirectory, 'Annotated_counts_intensities_2.csv'), table);
+io.writeTable(os.path.join(BaseDirectory, 'Annotated_counts_intensities.csv'), table);
 
 #Without weigths (pure cell number):
 ids, counts = countPointsInRegions(points, labeledImage = AnnotationFile, intensities = None);
@@ -103,7 +103,7 @@ table = numpy.zeros(ids.shape, dtype=[('id','int64'),('counts','f8'),('name', 'a
 table["id"] = ids;
 table["counts"] = counts;
 table["name"] = labelToName(ids);
-io.writeTable(os.path.join(BaseDirectory, 'Annotated_counts_2.csv'), table);
+io.writeTable(os.path.join(BaseDirectory, 'Annotated_counts.csv'), table);
 
 
 
