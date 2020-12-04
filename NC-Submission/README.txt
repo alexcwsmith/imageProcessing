@@ -13,7 +13,7 @@ Python libraries specified in requirements.txt
 3) sudo chmod +x clearMapSubregionParser.py
 
 ###Run the code (expected time 5-15 seconds):
-    $ python3 clearMapSubregionParser_NCeditors.py --directory ./  --hemisphere 'left' --samples IA1_LB --save True
+    $ python3 clearMapSubregionParser.py --directory ./  --hemisphere 'left' --samples IA1_LB --save True
 
 ###Expected Text Output:
 
