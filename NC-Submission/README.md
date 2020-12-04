@@ -1,5 +1,5 @@
-###Instructions for using custom code for Smith et al., Nature Communications submission NCOMMS-20-45565
-###Note: text following $ in these instructions is meant to be entered into the terminal/command prompt exactly (case sensitive) 
+#Instructions for using custom code for Smith et al., Nature Communications submission NCOMMS-20-45565
+#Note: text following $ in these instructions is meant to be entered into the terminal/command prompt exactly (case sensitive) 
 
 ###System requirements:
 Tested on Linux Ubuntu 18.04LTS, but should work on Mac OSX & Windows.
