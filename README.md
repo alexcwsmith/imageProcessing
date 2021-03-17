@@ -15,7 +15,7 @@ Currently, my analysis pipeline looks like this:
 
 3) clearMapWatershedProcess.py - Performs resampling, alignment to atlas, cell detection, voxelization, and region segmentation.
 
-4) clearMapBatchProcessing.py script runs all of the other steps from the process template (downsampling, registration, transformation, voxeliation, region counts) en masse for all animals at once. This saves a lot of time.
+4) clearMapBatchProcessing.py script runs all steps from the process template other than cell detection (i.e. downsampling, registration, transformation, voxeliation, region counts) en masse for all animals at once. This saves a lot of time.
 
 5) clearMapAnalyzeTemplate.py - Once data is generated for each animal, this script runs the groupwise comparisons.
 
