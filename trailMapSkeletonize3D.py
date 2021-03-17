@@ -7,13 +7,9 @@ Created on Fri Sep 18 14:14:35 2020
 """
 
 import os
-import skimage
 from skimage import io
 from skimage import morphology
 import numpy as np
-from skimage.filters import meijering
-from skimage import filters
-from scipy import ndimage
 import time
 
 directory='/d2/studies/ClearMap/FosTRAP_ChR2_March2021/'
