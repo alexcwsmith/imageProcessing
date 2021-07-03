@@ -18,17 +18,18 @@ import ClearMap.Visualization.Plot as plt
 import ClearMap.Analysis.Label as lbl
 import numpy as np
 
-sampleName = 'ROC_13'
-execfile('/d2/studies/ClearMap/IA_iDISCO/' + sampleName + '/parameter_file_' + sampleName + '.py')
-baseDirectory = '/d2/studies/ClearMap/IA_iDISCO/' + sampleName
-region = 'Caudoputamen'
+sampleName = 'LowNIC'
+#execfile('/d2/studies/ClearMap/IA_iDISCO/' + sampleName + '/parameter_file_' + sampleName + '.py')
+execfile('/d2/studies/ClearMap/Alex_Acute_iDISCO/3RB_HighNIC/parameter_file_template_3RB.py')
+baseDirectory = '/d2/studies/ClearMap/Alex_Acute_iDISCO/NIC_HeatMaps/FiguresForPaper/'
+region = 'MSC'
 
 
 points = io.readPoints(TransformedCellsFile)
 data = plt.overlayPoints(AnnotationFile, points.astype(int), pointColor = None)
-io.writeData(os.path.join(BaseDirectory, sampleName + '_Annotations_Points_Overlay.tif'), data)
+io.writeData(os.path.join(BaseDirectory, sampleName + '_Annotations_Points_Overlay_newAtlas2.tif'), data)
 data = data[:,:,:,1:]
-io.writeData(os.path.join(BaseDirectory, sampleName + '_Points_Transformed.tif'), data)
+io.writeData(os.path.join(BaseDirectory, sampleName + '_Points_Transformed_newAtlas2.tif'), data)
 
 label = io.readData(AnnotationFile)
 label = label.astype('int32')
@@ -47,14 +48,7 @@ for l in labelids:
     if not (lbl.labelAtLevel(l, 6) == 672):
        outside = np.logical_or(outside, label == l);
 
-#DP = 814 (level 6)
-#MHb = 483 (level 7)
-#Caudoputamen = 672 (level 6)
-#Accumbens = 56
-#CA3 = 463 (Level 8)
-#Prelimbic = 972 (Level 6)
 
-#heatmap = io.readData(AnnotationFile)
 heatmap = io.readData(os.path.join(baseDirectory, sampleName + '_Points_Transformed.tif'))
 heatmap[outside] = 0;
 
