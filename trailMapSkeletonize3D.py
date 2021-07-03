@@ -33,10 +33,14 @@ def skel(directory, crop=None, flip='y', convertTo16Bit=False, debug=False):
         Dictionary with ImageJ-format cropping coordinates ({width:, height:, x:, y:,})
     flip : string (optional, default 'y')
         Option to flip axis, can be any combination of 'xyz'.
-    convertTo16Bit : bool
+    convertTo16Bit : bool (optional, default False)
         Whether to convert the image to 16 bit before saving. Have not double checked that this gives the same results as converting in ImageJ yet though.
-    debug : bool
+    debug : bool (optional, default False)
         Run in debug mode, process only a small substack of data, 50 planes in the center of the stack.
+
+    Returns
+    -------
+    3D array of thresholded skeleton.
     """
     sample = os.path.realpath(directory).split('/')[-2] #the number at the end of this line may change based on the file path of directory, for the current path -2 is correct (sample variable is ROC_9)"
     print("Started " + str(sample) + " at " + time.ctime())
