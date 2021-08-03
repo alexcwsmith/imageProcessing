@@ -7,40 +7,44 @@ Created on Fri Sep 18 14:14:35 2020
 """
 
 import os
-import skimage
 from skimage import io
-from skimage import img_as_uint
 from skimage import morphology
+from skimage import img_as_uint
 import numpy as np
-from scipy import ndimage
 import time
 import argparse
 
+#If you are planning to run this straight from the command line, delete or comment out the following 
+#4 lines (everything before the function definition). See bottom of script for CLI options, or just input
+#'python3 TrailMap_Skeletonize3D --help' into the terminal
 directory='/d2/studies/ClearMap/ROC_ChR2/ROC31/seg-ChR2/'
 if not os.path.exists(directory):
     raise FileNotFoundError("Directory does not exist, check path")
-#ROC33: crop = {'width':1900,'height':2300,'x':170,'y':260}
-crop={'width':1900,'height':2300,'x':135,'y':260} #ROC31
+crop=None #{'width':1900,'height':2300,'x':135,'y':260} #ROC31
 
 def skel(directory, crop=None, flip='y', convertTo16Bit=False, debug=False):
-    """Skeletonize TrailMap results.
+    """Skeletonize TrailMap results as described in Friedmann et al., PNAS 2020 (PMID: 32358193)
+    
+    Copied from methods section:
+        "Probabilistic volumes from the output of TrailMap were binarized at 8 separate thresholds, from 0.2 to 
+        0.9. Each of these eight volumes was skeletonized in three dimensions (skimage-morphology-skeletonize_3d).
+        The logical binary skeleton outputs were each weighted by the initial probability threshold used to generate
+        them and subsequently were summed together"
+    
+    The above is done in lines 61-67 of this script (starting with the line 'for i in range(2,10,1):')
     
     Parameters
     ----------
     directory : string
         Path to directory with segmented data.
     crop : dict (optional, default None)
-        Dictionary with ImageJ-format cropping coordinates ({width:, height:, x:, y:,})
+        Dictionary with ImageJ-format cropping coordinates: {width:int, height:int, x:int, y:int}
     flip : string (optional, default 'y')
-        Option to flip axis, can be any combination of 'xyz'.
-    convertTo16Bit : bool (optional, default False)
+        Option to flip (reverse) axis, can be any combination of 'xyz'.
+    convertTo16Bit : bool
         Whether to convert the image to 16 bit before saving. Have not double checked that this gives the same results as converting in ImageJ yet though.
-    debug : bool (optional, default False)
+    debug : bool
         Run in debug mode, process only a small substack of data, 50 planes in the center of the stack.
-
-    Returns
-    -------
-    3D array of thresholded skeleton.
     """
     sample = os.path.realpath(directory).split('/')[-2] #the number at the end of this line may change based on the file path of directory, for the current path -2 is correct (sample variable is ROC_9)"
     print("Started " + str(sample) + " at " + time.ctime())
