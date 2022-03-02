@@ -34,7 +34,7 @@ def h5toTIF(img_path, key='Data'):
     hf = h5py.File(img_path, 'r')
     data = hf.get(key)
     if not data:
-        print("Invalid h5 key, detected keys are: " + str(hf.keys()))
+        raise KeyError("Invalid h5 key, detected keys are: " + str(hf.keys()))
     print("Image loaded with size " + str(data.shape))
     io.imsave(save_path, np.array(data), bigtiff=True, check_contrast=False)
     print("Wrote tif file to " + str(save_path))
