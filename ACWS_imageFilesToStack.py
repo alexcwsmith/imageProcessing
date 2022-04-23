@@ -93,7 +93,7 @@ def filesToStack(directory, load_pattern, sampleName, zindices=None, crop=False,
     if returnArray:
         return imc
 
-filesToStack(directory, load_pattern, sampleName, zindices=zindices, crop=crop, saveTIF=True, savePlanes=True, imagej=True)
+#filesToStack(directory, load_pattern, sampleName, zindices=zindices, crop=crop, saveTIF=True, savePlanes=True, imagej=True)
 
 if __name__=='__main__':
     p = argparse.ArgumentParser()
@@ -104,5 +104,5 @@ if __name__=='__main__':
     p.add_argument('-c', '--crop',type=dict,default=None,help='{width, height, x, y} dict to crop images to (i.e. imageJ style cropping coordinates)')
     p.add_argument('--save',type=bool,default=True,help='Boolean whether to save TIF output')
     args = p.parse_args()
-    filesToArray(args.directory, args.load_pattern, args.sampleName, zindices=args.zindices, crop=args.crop, saveTIF=args.saveTIF)
+    filesToStack(args.directory, args.load_pattern, args.sampleName, zindices=args.zindices, crop=args.crop, saveTIF=args.saveTIF)
     
