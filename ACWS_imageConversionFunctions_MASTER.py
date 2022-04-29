@@ -37,7 +37,10 @@ def horizontalToCoronal(imPath):
     save_path = f+'_Coronal'+e
     im = imread(imPath)
     print("Image loaded with size " + str(im.shape))
-    im_corr = im.transpose(1,2,0)
+    if im.ndim==4:
+        im_corr = im.transpose(1,2,0,3)
+    elif im.ndim==3:
+        im_corr = im.transpose(1,2,0)
     io.imsave(save_path, im_corr, check_contrast=False)
 
 def horizontalToSagittal(imPath):
@@ -56,10 +59,14 @@ def horizontalToSagittal(imPath):
     f, e = os.path.splitext(imPath)
     if f.endswith('.ome'):
         f = f.strip('.ome')
-    save_path = f+'_Sagittal.tif'
+        e = '.ome'+e
+    save_path = f+'_Sagittal'+e
     im = imread(imPath)
     print("Image loaded with size " + str(im.shape))
-    im_sag = im.transpose(2,0,1)
+    if im.ndim==4:
+        im_sag = im.transpose(2,0,1,3)
+    elif im.ndim==3:
+        im_sag = im.transpose(2,0,1)
     io.imsave(save_path, im_sag, check_contrast=False)
 
 def sagittalToHorizontal(imPath):
@@ -79,11 +86,43 @@ def sagittalToHorizontal(imPath):
     f, e = os.path.splitext(imPath)
     if f.endswith('.ome'):
         f = f.strip('.ome')
-    save_path = f+'_Horizontal.tif'
+        e = '.ome'+e
+    save_path = f+'_Horizontal'+e
     im = imread(imPath)
     print("Image loaded with size " + str(im.shape))
-    im_sag = im.transpose(1,2,0)
-    io.imsave(save_path, im_sag, check_contrast=False)
+    if im.ndim==4:
+        im_hor = im.transpose(2,1,0,3)
+    elif im.ndim==3:
+        im_hor = im.transpose(2,1,0)
+    io.imsave(save_path, im_hor, check_contrast=False)
+    
+def sagittalToCoronal(imPath):
+    """Transpose sagittal orientation to coronal"    
+
+    Parameters
+    ----------
+    imPath : str
+        Full path to image to transpose.
+
+    Returns
+    -------
+    None.
+
+    """
+
+    f, e = os.path.splitext(imPath)
+    if f.endswith('.ome'):
+        f = f.strip('.ome')
+        e='.ome'+e
+    save_path = f+'_Coronal'+e
+    im = imread(imPath)
+    print("Image loaded with size " + str(im.shape))
+    if im.ndim==4:
+        im_cor = im.transpose(1,2,0,3)
+    elif im.ndim==3:
+        im_cor = im.transpose(1,2,0)        
+    io.imsave(save_path, im_cor, check_contrast=False)
+  
 
 def loadDir(path, ext='.tif'):
     return sorted(os.path.join(path, x) for x in os.listdir(path) if x.endswith(ext))
@@ -135,6 +174,9 @@ def changeBitDepth(image, target=np.uint16, save=True):
     elif save:
         dirname = os.path.dirname(image)
         n, e = os.path.splitext(image)
+        if n.endswith('.ome'):
+            n = n.strip('.ome')
+            e = '.ome'+e
         if not os.path.exists(os.path.join(dirname, newType)):
             os.mkdir(os.path.join(dirname, newType))
         imsave(os.path.join(dirname, newType, newType+'_'+n+e), im, check_contrast=False)
@@ -142,6 +184,9 @@ def changeBitDepth(image, target=np.uint16, save=True):
 def _multiStackToFiles(plane, stackFile, channel, planeNum=0):
     name = os.path.basename(stackFile)
     n, e = os.path.splitext(name)
+    if n.endswith('.ome'):
+        n = n.strip('.ome')
+        e = '.ome'+e
     directory = os.path.dirname(stackFile)
     
     if stackFile.endswith('.ims') or stackFile.endswith('.h5'):
@@ -165,6 +210,9 @@ def multiStackToFiles(stackFile, channel, nthreads):
     """
     name = os.path.basename(stackFile)
     n, e = os.path.splitext(name)
+    if n.endswith('.ome'):
+        n = n.strip('.ome')
+        e = '.ome'+e
     directory = os.path.dirname(stackFile)
     if not os.path.exists(os.path.join(directory, n + '_C' + str(channel)+'/')):
         os.mkdir(os.path.join(directory, n + '_C' + str(channel)+'/'))
@@ -228,6 +276,7 @@ def TIFtoH5(imPath, key='Data'):
     f, e = os.path.splitext(imPath)
     if f.endswith('.ome'):
         f = f.strip('.ome')
+        e = '.ome'+e
     save_path = f+'.h5'
     hf = h5py.File(save_path, 'a')
     im = imread(imPath)
