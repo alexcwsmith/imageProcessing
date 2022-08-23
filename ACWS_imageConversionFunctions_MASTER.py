@@ -5,7 +5,7 @@ Created on Thu Mar  3 12:36:18 2022
 
 @author: smith
 """
-
+#%%
 import os
 from skimage.io import imread, imsave, imread_collection
 from skimage import io
@@ -16,8 +16,20 @@ import h5py
 from pathos.pools import ProcessPool
 import time
 import glob
+try:
+    from aicsimageio.readers import OmeTiffReader
+    from aicsimageio.writers import OmeTiffWriter
+    from aicsimageio.types import PhysicalPixelSizes as ps
+except ImportError:
+    print("aicsimageio plugin unavailable")
 
-def horizontalToCoronal(imPath):
+
+#%%
+def loadDir(path, ext='.tif'):
+    return sorted(os.path.join(path, x) for x in os.listdir(path) if x.endswith(ext))
+
+#%%  
+def horizontalToCoronal(imPath, plugin='skimage'):
     """Transpose horizontal orientation to coronal
 
     Parameters
@@ -35,15 +47,29 @@ def horizontalToCoronal(imPath):
         f = f.strip('.ome')
         e = '.ome'+e
     save_path = f+'_Coronal'+e
-    im = imread(imPath)
+    if plugin=='skimage':
+        im = imread(imPath)
+    elif plugin=='aicsimageio':
+        im = OmeTiffReader(imPath)
+        pix = im.physical_pixel_sizes
+        im = im.get_image_data('ZYX')
+        im = np.squeeze(im)        
     print("Image loaded with size " + str(im.shape))
     if im.ndim==4:
         im_corr = im.transpose(1,2,0,3)
     elif im.ndim==3:
         im_corr = im.transpose(1,2,0)
-    io.imsave(save_path, im_corr, check_contrast=False)
+    if plugin=='skimage':
+        io.imsave(save_path, im_corr, check_contrast=False)
+    elif plugin=='aicsimageio':
+        OmeTiffWriter.save(data=im_corr,
+                           uri=save_path,
+                           physical_pixel_sizes=pix,
+                           dim_order='ZYX')
+    
+#%%
+def horizontalToSagittal(imPath, plugin='skimage'):
 
-def horizontalToSagittal(imPath):
     """Transpose horizontal orientation to sagittal"    
 
     Parameters
@@ -60,15 +86,28 @@ def horizontalToSagittal(imPath):
     if f.endswith('.ome'):
         f = f.strip('.ome')
         e = '.ome'+e
-    save_path = f+'_Sagittal'+e
-    im = imread(imPath)
+    save_path = f+'_Coronal'+e
+    if plugin=='skimage':
+        im = imread(imPath)
+    elif plugin=='aicsimageio':
+        im = OmeTiffReader(imPath)
+        pix = im.physical_pixel_sizes
+        im = im.get_image_data('ZYX')
+        im = np.squeeze(im)        
     print("Image loaded with size " + str(im.shape))
     if im.ndim==4:
         im_sag = im.transpose(2,0,1,3)
     elif im.ndim==3:
         im_sag = im.transpose(2,0,1)
-    io.imsave(save_path, im_sag, check_contrast=False)
+    if plugin=='skimage':
+        io.imsave(save_path, im_sag, check_contrast=False)
+    elif plugin=='aicsimageio':
+        OmeTiffWriter.save(data=im_sag,
+                           uri=save_path,
+                           physical_pixel_sizes=pix,
+                           dim_order='ZYX')
 
+#%%
 def sagittalToHorizontal(imPath):
     """Transpose sagittal orientation to horizontal"    
 
@@ -95,7 +134,8 @@ def sagittalToHorizontal(imPath):
     elif im.ndim==3:
         im_hor = im.transpose(2,1,0)
     io.imsave(save_path, im_hor, check_contrast=False)
-    
+
+#%%
 def sagittalToCoronal(imPath):
     """Transpose sagittal orientation to coronal"    
 
@@ -123,10 +163,7 @@ def sagittalToCoronal(imPath):
         im_cor = im.transpose(1,2,0)        
     io.imsave(save_path, im_cor, check_contrast=False)
   
-
-def loadDir(path, ext='.tif'):
-    return sorted(os.path.join(path, x) for x in os.listdir(path) if x.endswith(ext))
-
+#%%
 def changeBitDepth(image, target=np.uint16, save=True):
     """Change bit depth of image
 
@@ -181,6 +218,7 @@ def changeBitDepth(image, target=np.uint16, save=True):
             os.mkdir(os.path.join(dirname, newType))
         imsave(os.path.join(dirname, newType, newType+'_'+n+e), im, check_contrast=False)
 
+#%%
 def _multiStackToFiles(plane, stackFile, channel, planeNum=0):
     name = os.path.basename(stackFile)
     n, e = os.path.splitext(name)
@@ -235,82 +273,7 @@ def multiStackToFiles(stackFile, channel, nthreads):
         pool.join() 
     print("Finished at " + time.ctime())
 
-def _IMStoTIF(filePath):
-    name, ext = os.path.splitext(filePath)
-    if ext != '.ims':
-        raise TypeError('Input filePath must be .ims file')      
-    file = h5py.File(filePath, 'a')
-    data = file.get('DataSet').get('ResolutionLevel 0/TimePoint 0/Channel 0/Data')
-    print("Saving " + name + ".tif")
-    imsave(name + '.tif', np.array(data), bigtiff=True)
-
-def multiprocessIMStoTIF(args):
-    """CLI tool to extract TIF planes from Imaris .ims file.
-    
-    Parameters
-    ----------
-    args : argparse.Namespace
-        Namespace consisting of args.directory, args.nthreads
-    """
-    print("Starting at " + str(time.ctime()))
-    processes = int(args.nthreads)
-    queue = loadDir(args.directory, ext='.ims')
-    os.chdir(str(args.directory))
-    pool = ProcessPool(nodes=processes)
-    pool.map(_IMStoTIF, queue)
-    pool.close()
-    pool.join()
-    print('Completed at ' + str(time.ctime()))
-
-
-def TIFtoH5(imPath, key='Data'):
-    """Convert .tif file to .h5
-    
-    Parameters
-    ----------
-    imPath : str
-        Full path to .tif image.
-    key : str, optional
-        h5 key to save. Default is 'Data'
-    """
-    f, e = os.path.splitext(imPath)
-    if f.endswith('.ome'):
-        f = f.strip('.ome')
-        e = '.ome'+e
-    save_path = f+'.h5'
-    hf = h5py.File(save_path, 'a')
-    im = imread(imPath)
-    print("Image loaded with size " + str(im.shape))
-    hf.create_dataset(key, data=im)
-    hf.close()
-    print("Wrote h5 file with key '" + str(key) + "' to " + str(save_path))
-
-def h5toTIF(imPath, key='Data'):
-    """Convert .h5 file to .tif
-    
-    Parameters
-    ----------
-    imPath : str
-        Full path to .h5 image.
-    key : str, optional
-        h5 key to load. Default is 'Data'
-    """
-
-    if not imPath.endswith('.h5'):
-        raise NameError("Only .h5 files supported at this time.")
-    f, e = os.path.splitext(imPath)
-    if f.endswith('.lux'):
-        f = f.strip('.lux')
-    save_path = f+'.tif'
-    hf = h5py.File(imPath, 'r')
-    data = hf.get(key)
-    if not data:
-        print("Invalid h5 key, detected keys are: " + str(hf.keys()))
-    print("Image loaded with size " + str(data.shape))
-    io.imsave(save_path, np.array(data), bigtiff=True, check_contrast=False)
-    print("Wrote tif file to " + str(save_path))
-
-
+#%%
 def filesToStack(directory, load_pattern, sampleName, zindices=None, 
                  crop=False, saveTIF=True, savePlanes=True, memmap=True,
                  conserve_mem=True, returnArray=False):
@@ -392,6 +355,94 @@ def filesToStack(directory, load_pattern, sampleName, zindices=None,
     if returnArray:
         return imc
 
+#%%
+def _IMStoTIF(filePath):
+    name, ext = os.path.splitext(filePath)
+    if ext != '.ims':
+        raise TypeError('Input filePath must be .ims file')      
+    file = h5py.File(filePath, 'a')
+    data = file.get('DataSet').get('ResolutionLevel 0/TimePoint 0/Channel 0/Data')
+    print("Saving " + name + ".tif")
+    imsave(name + '.tif', np.array(data), bigtiff=True)
+
+def multiprocessIMStoTIF(args):
+    """CLI tool to extract TIF planes from Imaris .ims file.
+    
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Namespace consisting of args.directory, args.nthreads
+    """
+    print("Starting at " + str(time.ctime()))
+    processes = int(args.nthreads)
+    queue = loadDir(args.directory, ext='.ims')
+    os.chdir(str(args.directory))
+    pool = ProcessPool(nodes=processes)
+    pool.map(_IMStoTIF, queue)
+    pool.close()
+    pool.join()
+    print('Completed at ' + str(time.ctime()))
+
+#%%
+def TIFtoH5(imPath, key='Data', crop=None, plugin='skimage'):
+    """Convert .tif file to .h5
+    
+    Parameters
+    ----------
+    imPath : str
+        Full path to .tif image.
+    key : str, optional
+        h5 key to save. Default is 'Data'
+    """
+    f, e = os.path.splitext(imPath)
+    if f.endswith('.ome'):
+        f = f.strip('.ome')
+        e = '.ome'+e
+    save_path = f+'.h5'
+    hf = h5py.File(save_path, 'a')
+    if plugin=='skimage':
+        im = imread(imPath)
+    elif plugin=='aicsimageio':
+        im = OmeTiffReader(imPath)
+        im = im.get_image_data('ZYX')
+        im = np.squeeze(im)
+    else:
+        raise NameError("Invalid plugin specified, valid options are 'skimage' or 'aicsimageio'")
+    print("Image loaded with size " + str(im.shape))
+    if crop:
+        im = im[crop['z']:crop['z']+crop['depth'], crop['y']:crop['y']+crop['height'],crop['x']:crop['x']+crop['width']]
+    hf.create_dataset(key, data=im)
+    hf.close()
+    print("Wrote h5 file with key '" + str(key) + "' to " + str(save_path))
+
+#%%
+def h5toTIF(imPath, key='Data'):
+    """Convert .h5 file to .tif
+    
+    Parameters
+    ----------
+    imPath : str
+        Full path to .h5 image.
+    key : str, optional
+        h5 key to load. Default is 'Data'
+    """
+
+    if not imPath.endswith('.h5'):
+        raise NameError("Only .h5 files supported at this time.")
+    f, e = os.path.splitext(imPath)
+    if f.endswith('.lux'):
+        f = f.strip('.lux')
+    save_path = f+'.tif'
+    hf = h5py.File(imPath, 'r')
+    data = hf.get(key)
+    if not data:
+        print("Invalid h5 key, detected keys are: " + str(hf.keys()))
+    print("Image loaded with size " + str(data.shape))
+    io.imsave(save_path, np.array(data), bigtiff=True, check_contrast=False)
+    print("Wrote tif file to " + str(save_path))
+
+
+#%%
 def downsampleZstack(factor, imagePath=None, im=None, name=None, save=True):
     """Downsample a Z-stack.
     
@@ -427,6 +478,7 @@ def downsampleZstack(factor, imagePath=None, im=None, name=None, save=True):
     elif not save:
         return flatImage
 
+#%%
 def _downsample(imagePath, size=(12, 256,256), mode='wrap', preserve_range=True, anti_aliasing=True):
     im = io.imread(imagePath)
     directory = os.path.dirname(imagePath)
@@ -452,3 +504,4 @@ def downsample(directory, ext='.tif', nthreads=24):
     pool.close()
     pool.join()
 
+#%%
